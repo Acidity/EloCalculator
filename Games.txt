@@ -1,0 +1,30 @@
+//Week 1
+TSM:Coast
+Vulcun:Curse
+Cloud9:Dignitas
+Velocity:CLG
+Cloud9:TSM
+Coast:Vulcun
+Curse:Velocity
+CLG:Dignitas
+Cloud9:Curse
+Dignitas:TSM
+Vulcun:Velocity
+Coast:CLG
+Dignitas:Velocity
+Cloud9:Coast
+TSM:Vulcun
+CLG:Curse
+Coast:Dignitas
+Vulcun:CLG
+TSM:Curse
+Cloud9:Velocity
+//Week 2
+CLG:Cloud9
+TSM:Velocity
+Vulcun:Curse
+Dignitas:Coast
+Cloud9:Vulcun
+CLG:TSM
+Coast:Velocity
+Curse:Dignitas
