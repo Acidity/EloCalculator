@@ -1,3 +1,6 @@
+//Copyright 2013 Tyler O'Meara
+//See License.txt for more details
+
 package com.TylerOMeara.EloCalculator;
 
 import java.util.ArrayList;
