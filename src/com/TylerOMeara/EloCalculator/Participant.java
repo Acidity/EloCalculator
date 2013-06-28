@@ -2,7 +2,7 @@ package com.TylerOMeara.EloCalculator;
 
 import java.util.ArrayList;
 
-public class Team 
+public class Participant 
 {
 	double elo = 1200;
 	double wins = 0;
@@ -53,7 +53,7 @@ public class Team
 		this.k = k;
 	}
 	
-	public Team(String Name, String ShortName)
+	public Participant(String Name, String ShortName)
 	{
 		name = Name;
 		shortName = ShortName;

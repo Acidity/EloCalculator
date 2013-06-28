@@ -9,8 +9,8 @@ import java.util.HashMap;
 
 public class Main 
 {
-	static int numTeams;
-	static HashMap<String,Team> Teams = new HashMap<String,Team>();
+	static int numParticipants;
+	static HashMap<String,Participant> Participants = new HashMap<String,Participant>();
 	static boolean reddit = true;
 	static boolean roundWinPercs = true;
 	static int currentWeek = 0;
@@ -18,18 +18,18 @@ public class Main
 	{
 		BufferedReader teams;
 		try {
-			teams = new BufferedReader(new FileReader("Teams.txt"));
+			teams = new BufferedReader(new FileReader("Participants.txt"));
 			String line;
 			int x = 0;
 			while((line = teams.readLine()) != null)
 			{
 				if(x == 0)
 				{
-					numTeams = Integer.valueOf(line);
+					numParticipants = Integer.valueOf(line);
 				}
 				else
 				{
-					Teams.put(line.split(":")[0], new Team(line.split(":")[1],line.split(":")[0]));
+					Participants.put(line.split(":")[0], new Participant(line.split(":")[1],line.split(":")[0]));
 				}
 				x++;
 			}
@@ -52,12 +52,12 @@ public class Main
 				{
 					String winner = line.split(":")[0];
 					String loser = line.split(":")[1];
-					if(Teams.get(winner) == null || Teams.get(loser) == null)
+					if(Participants.get(winner) == null || Participants.get(loser) == null)
 					{
-						System.out.println("Unable to find team specified on line " + x + ". Stopping execution.");
+						System.out.println("Unable to find participant specified on line " + x + " of 'Games.txt'. Stopping execution.");
 						return;
 					}
-					CalculateEloChange(Teams.get(winner),Teams.get(loser));
+					CalculateEloChange(Participants.get(winner),Participants.get(loser));
 				}
 				else
 				{
@@ -66,7 +66,7 @@ public class Main
 						endOfWeekEloRatings();
 					}
 					
-					for(Team team : Teams.values())
+					for(Participant team : Participants.values())
 					{
 						team.endOfWeek();
 					}
@@ -86,7 +86,7 @@ public class Main
 		winProbabilities();
 	}
 		
-	public static void CalculateEloChange(Team winner, Team loser)
+	public static void CalculateEloChange(Participant winner, Participant loser)
 	{
 		double winPerc = Math.pow(10, winner.getElo()/400)/(Math.pow(10, winner.getElo()/400) + Math.pow(10, loser.getElo()/400));
 		double winnerEloChange = winner.getK()*(1-winPerc);
@@ -106,7 +106,7 @@ public class Main
 		System.out.println("End of week " + currentWeek + " Elo ratings");
 		
 		HashMap<Double, String> eloMap = new HashMap<Double,String>();
-		for(Team team : Teams.values())
+		for(Participant team : Participants.values())
 		{
 			
 			if(eloMap.containsKey(team.getElo()))
@@ -134,15 +134,15 @@ public class Main
 		{
 			if(!eloMap.get(elo).contains(":"))
 			{
-				double lastWeeksElo = Teams.get(eloMap.get(elo)).getEloByWeek().get(Teams.get(eloMap.get(elo)).getEloByWeek().size()-1);
+				double lastWeeksElo = Participants.get(eloMap.get(elo)).getEloByWeek().get(Participants.get(eloMap.get(elo)).getEloByWeek().size()-1);
 				if(!reddit)
 				{
-					System.out.println("#" + y + " " + eloMap.get(elo) + " | " + elo + " (" + (elo - lastWeeksElo) + ")" + " | " + (int)Teams.get(eloMap.get(elo)).getWins() + "-" + (int)Teams.get(eloMap.get(elo)).getLosses() + " | " + Math.round(elo) + " (" + (Math.round(elo) - Math.round(lastWeeksElo)) + ")");
+					System.out.println("#" + y + " " + eloMap.get(elo) + " | " + elo + " (" + (elo - lastWeeksElo) + ")" + " | " + (int)Participants.get(eloMap.get(elo)).getWins() + "-" + (int)Participants.get(eloMap.get(elo)).getLosses() + " | " + Math.round(elo) + " (" + (Math.round(elo) - Math.round(lastWeeksElo)) + ")");
 				}
 				else
 				{
 					System.out.println("|" + y + "|" + eloMap.get(elo) + "|" + Math.round(elo) + "|" + (Math.round(elo) - Math.round(lastWeeksElo))
-							+ "|" + (int)Teams.get(eloMap.get(elo)).getWins() + "-" + (int)Teams.get(eloMap.get(elo)).getLosses() + "|"
+							+ "|" + (int)Participants.get(eloMap.get(elo)).getWins() + "-" + (int)Participants.get(eloMap.get(elo)).getLosses() + "|"
 							+ elo + "|" + (elo - lastWeeksElo) + "|");
 				}
 			}
@@ -151,15 +151,15 @@ public class Main
 				String[] teams = eloMap.get(elo).split(":");
 				for(String team : teams)
 				{
-					double lastWeeksElo = Teams.get(team).getEloByWeek().get(Teams.get(team).getEloByWeek().size()-1);
+					double lastWeeksElo = Participants.get(team).getEloByWeek().get(Participants.get(team).getEloByWeek().size()-1);
 					if(!reddit)
 					{
-						System.out.println("#" + y + " " + team + " | " + elo + " (" + (elo - lastWeeksElo) + ")" + " | " + (int)Teams.get(team).getWins() + "-" + (int)Teams.get(team).getLosses() + " | " + Math.round(elo) + " (" + (Math.round(elo) - Math.round(lastWeeksElo)) + ")");
+						System.out.println("#" + y + " " + team + " | " + elo + " (" + (elo - lastWeeksElo) + ")" + " | " + (int)Participants.get(team).getWins() + "-" + (int)Participants.get(team).getLosses() + " | " + Math.round(elo) + " (" + (Math.round(elo) - Math.round(lastWeeksElo)) + ")");
 					}
 					else
 					{
 						System.out.println("|" + y + "|" + team + "|" + Math.round(elo) + "|" + (Math.round(elo) - Math.round(lastWeeksElo))
-								+ "|" + (int)Teams.get(team).getWins() + "-" + (int)Teams.get(team).getLosses() + "|"
+								+ "|" + (int)Participants.get(team).getWins() + "-" + (int)Participants.get(team).getLosses() + "|"
 								+ elo + "|" + (elo - lastWeeksElo) + "|");
 					}
 				}
@@ -187,7 +187,7 @@ public class Main
 				{
 					String blue = line.split(":")[0];
 					String red = line.split(":")[1];
-					double blueWinPerc = Math.pow(10, Teams.get(blue).getElo()/400)/(Math.pow(10, Teams.get(blue).getElo()/400) + Math.pow(10, Teams.get(red).getElo()/400));
+					double blueWinPerc = Math.pow(10, Participants.get(blue).getElo()/400)/(Math.pow(10, Participants.get(blue).getElo()/400) + Math.pow(10, Participants.get(red).getElo()/400));
 					double redWinPerc = 1-blueWinPerc;
 					System.out.print("|" + blue);
 					if(roundWinPercs)
