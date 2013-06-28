@@ -85,7 +85,7 @@ public class Participant
 	
 	public void calculateWinRate()
 	{
-		if(losses>0)
+		if(losses > 0)
 			winRate = wins/losses;
 		else
 			winRate = 1;
