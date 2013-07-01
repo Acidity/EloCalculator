@@ -33,6 +33,11 @@ public class Main
 	static boolean roundWinPercs = true;
 	
 	/**
+	 * Whether or not to round the Win Percentages to the nearest who number when outputting it
+	 */
+	static boolean useFullNames = false;
+	
+	/**
 	 * Holds the current week as specified in Games.txt
 	 */
 	static int currentWeek = 0;
@@ -41,106 +46,13 @@ public class Main
 	 * It's the main method. Duh.
 	 * @param args Unused
 	 */
+	
+	final static String versionString = "0.0.5.016 7/1/2013";
+	
 	public static void main(String[] args)
 	{
-		BufferedReader participants;
-		
-		//Open Participants.txt and read in it's data.
-		try {
-			participants = new BufferedReader(new FileReader("Participants.txt"));
-			
-			//Holds the line that is currently being processed.
-			String line;
-			
-			int lineNum = 0;
-			
-			//Loops until the end of the file is reached
-			while((line = participants.readLine()) != null)
-			{
-				//The first line holds how many participants are being ranked.
-				if(lineNum == 0)
-				{
-					numParticipants = Integer.valueOf(line);
-				}
-				//Every other line will have a single participant on it
-				//in the following format:
-				//ShortHandName:FullName
-				else
-				{
-					try
-					{
-						Double.valueOf(line.split(":")[2]);
-					}
-					catch(Exception e)
-					{
-						System.out.println("Error on line " + lineNum + " of Participants.txt. Expected a number after the second semicolon.");
-						return;
-					}
-					Participants.put(line.split(":")[0], new Participant(line.split(":")[1],line.split(":")[0],Double.valueOf(line.split(":")[2])));
-				}
-				lineNum++;
-			}
-		}
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-
-		BufferedReader games;
-		try {
-			games = new BufferedReader(new FileReader("Games.txt"));
-			String line;
-			int lineNum = 0;
-			//Loops until the end of the file is reached
-			while((line = games.readLine()) != null)
-			{
-				lineNum++;
-				//Lines starting with // are special directives and should be handled separately.
-				if(!line.startsWith("//"))
-				{
-					String winner = line.split(":")[0];
-					String loser = line.split(":")[1];
-					if(Participants.get(winner) == null || Participants.get(loser) == null)
-					{
-						System.out.println("Unable to find participant specified on line " + lineNum + " of 'Games.txt'. Stopping execution.");
-						return;
-					}
-					CalculateEloChange(Participants.get(winner),Participants.get(loser));
-				}
-				else
-				{
-					if(!line.equals("//Week 1"))
-					{
-						endOfWeekEloRatings();
-					}
-					
-					for(Participant team : Participants.values())
-					{
-						team.endOfWeek();
-					}
-					
-					System.out.println();
-					System.out.println("Begin " + line.substring(2));
-					try
-					{
-						Integer.valueOf(line.substring(line.lastIndexOf(" ") + 1));
-					}
-					catch(Exception e)
-					{
-						System.out.println("Error on line " + lineNum + " of Games.txt. Expected a number after the second semicolon.");
-						return;
-					}
-					currentWeek = Integer.valueOf(line.substring(line.lastIndexOf(" ") + 1));
-					System.out.println();
-				}
-				
-			}
-		}
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-		
+		loadParticipants();
+		loadGames();
 		endOfWeekEloRatings();
 		winProbabilities();
 	}
@@ -339,6 +251,110 @@ public class Main
 			}
 		}
 		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static void loadParticipants()
+	{
+		BufferedReader participants;
+		
+		//Open Participants.txt and read in it's data.
+		try {
+			participants = new BufferedReader(new FileReader("Participants.txt"));
+			
+			//Holds the line that is currently being processed.
+			String line;
+			
+			int lineNum = 0;
+			
+			//Loops until the end of the file is reached
+			while((line = participants.readLine()) != null)
+			{
+				//The first line holds how many participants are being ranked.
+				if(lineNum == 0)
+				{
+					numParticipants = Integer.valueOf(line);
+				}
+				//Every other line will have a single participant on it
+				//in the following format:
+				//ShortHandName:FullName
+				else
+				{
+					try
+					{
+						Double.valueOf(line.split(":")[2]);
+					}
+					catch(Exception e)
+					{
+						System.out.println("Error on line " + lineNum + " of Participants.txt. Expected a number after the second semicolon.");
+						return;
+					}
+					Participants.put(line.split(":")[0], new Participant(line.split(":")[1],line.split(":")[0],Double.valueOf(line.split(":")[2])));
+				}
+				lineNum++;
+			}
+		}
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static void loadGames()
+	{
+		BufferedReader games;
+		try {
+			games = new BufferedReader(new FileReader("Games.txt"));
+			String line;
+			int lineNum = 0;
+			//Loops until the end of the file is reached
+			while((line = games.readLine()) != null)
+			{
+				lineNum++;
+				//Lines starting with // are special directives and should be handled separately.
+				if(!line.startsWith("//"))
+				{
+					String winner = line.split(":")[0];
+					String loser = line.split(":")[1];
+					if(Participants.get(winner) == null || Participants.get(loser) == null)
+					{
+						System.out.println("Unable to find participant specified on line " + lineNum + " of 'Games.txt'. Stopping execution.");
+						return;
+					}
+					CalculateEloChange(Participants.get(winner),Participants.get(loser));
+				}
+				else
+				{
+					if(!line.equals("//Week 1"))
+					{
+						endOfWeekEloRatings();
+					}
+					
+					for(Participant team : Participants.values())
+					{
+						team.endOfWeek();
+					}
+					
+					System.out.println();
+					System.out.println("Begin " + line.substring(2));
+					try
+					{
+						Integer.valueOf(line.substring(line.lastIndexOf(" ") + 1));
+					}
+					catch(Exception e)
+					{
+						System.out.println("Error on line " + lineNum + " of Games.txt. Expected a number after the second semicolon.");
+						return;
+					}
+					currentWeek = Integer.valueOf(line.substring(line.lastIndexOf(" ") + 1));
+					System.out.println();
+				}
+				
+			}
+		}
+		catch (IOException e) 
 		{
 			e.printStackTrace();
 		}
