@@ -1,3 +1,4 @@
 reddit:true
 roundWinPercentages:true
 useFullName:true
+displayPerWinEloChanges:true

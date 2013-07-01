@@ -38,6 +38,11 @@ public class Main
 	static boolean useFullNames = false;
 	
 	/**
+	 * Whether or not to output the elo changes for every game
+	 */
+	static boolean perWinElo = false;
+	
+	/**
 	 * Holds the current week as specified in Games.txt
 	 */
 	static int currentWeek = 0;
@@ -47,7 +52,7 @@ public class Main
 	 * @param args Unused
 	 */
 	
-	final static String versionString = "0.0.5.020 7/1/2013";
+	final static String versionString = "0.0.5.023 7/1/2013";
 	
 	public static void main(String[] args)
 	{
@@ -82,7 +87,10 @@ public class Main
 		loser.setLosses(loser.getLosses()+1);
 		loser.calculateWinRate();
 		
-		System.out.println(winner.getName() + "(+" + winnerEloChange + ") won against " + loser.getName() + "(" + loserEloChange + ")" + " with an expected win chance of " + winPerc);
+		if(perWinElo)
+		{
+			System.out.println(winner.getName() + "(+" + winnerEloChange + ") won against " + loser.getName() + "(" + loserEloChange + ")" + " with an expected win chance of " + winPerc);
+		}
 	}
 	
 	/**
@@ -270,6 +278,10 @@ public class Main
 		}
 	}
 	
+	/**
+	 * Loads Participants.txt and adds all participants to the Participants HashMap
+	 */
+	
 	public static void loadParticipants()
 	{
 		BufferedReader participants;
@@ -311,6 +323,10 @@ public class Main
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Loads Games.txt and calculates the participants Elos based on the results.
+	 */
 	
 	public static void loadGames()
 	{
@@ -367,6 +383,10 @@ public class Main
 		}
 	}
 	
+	/**
+	 * Loads Settings.txt
+	 */
+	
 	public static void loadSettings()
 	{
 		BufferedReader settings;
@@ -404,6 +424,15 @@ public class Main
 						System.out.println("Expected a boolean after the semicolon on line " + lineNum + " of Settings.txt.");
 					}
 					useFullNames = Boolean.valueOf(line.split(":")[1]);
+				}
+				
+				if(line.startsWith("displayPerWinEloChanges:"))
+				{
+					if(!StringCastUtils.isBoolean(line.split(":")[1]))
+					{
+						System.out.println("Expected a boolean after the semicolon on line " + lineNum + " of Settings.txt.");
+					}
+					perWinElo = Boolean.valueOf(line.split(":")[1]);
 				}
 			}
 		}
