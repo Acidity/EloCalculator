@@ -4,7 +4,6 @@
 package com.TylerOMeara.EloCalculator;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
@@ -48,7 +47,7 @@ public class Main
 	 * @param args Unused
 	 */
 	
-	final static String versionString = "0.0.5.017 7/1/2013";
+	final static String versionString = "0.0.5.020 7/1/2013";
 	
 	public static void main(String[] args)
 	{
@@ -139,17 +138,23 @@ public class Main
 			{
 				//Elo held by this participant at the end of the previous week.
 				double lastWeeksElo = Participants.get(eloMap.get(elo)).getEloByWeek().get(Participants.get(eloMap.get(elo)).getEloByWeek().size()-1);
+				String teamName = eloMap.get(elo);
+				
+				if(useFullNames)
+				{
+					teamName = Participants.get(eloMap.get(elo)).getName();
+				}
 				
 				//General Console output
 				if(!reddit)
 				{
-					System.out.println("#" + ranking + " " + eloMap.get(elo) + " | " + elo + " (" + (elo - lastWeeksElo) + ")" + " | "
+					System.out.println("#" + ranking + " " + teamName + " | " + elo + " (" + (elo - lastWeeksElo) + ")" + " | "
 							+ (int)Participants.get(eloMap.get(elo)).getWins() + "-" + (int)Participants.get(eloMap.get(elo)).getLosses()
 							+ " | " + Math.round(elo) + " (" + (Math.round(elo) - Math.round(lastWeeksElo)) + ")");
 				}
 				else //Output into a Reddit-friendly table
 				{
-					System.out.println("|" + ranking + "|" + eloMap.get(elo) + "|" + Math.round(elo) + "|" + (Math.round(elo) - Math.round(lastWeeksElo))
+					System.out.println("|" + ranking + "|" + teamName + "|" + Math.round(elo) + "|" + (Math.round(elo) - Math.round(lastWeeksElo))
 							+ "|" + (int)Participants.get(eloMap.get(elo)).getWins() + "-" + (int)Participants.get(eloMap.get(elo)).getLosses() + "|"
 							+ elo + "|" + (elo - lastWeeksElo) + "|");
 				}
@@ -213,6 +218,12 @@ public class Main
 					double redWinPerc = 1-blueWinPerc;
 					if(reddit)
 					{
+						//Changes the strings to be the full names for the teams
+						if(useFullNames)
+						{
+							blue = Participants.get(blue).getName();
+							red = Participants.get(red).getName();
+						}
 						System.out.print("|" + blue);
 						if(roundWinPercs)
 						{
@@ -285,11 +296,7 @@ public class Main
 				//ShortHandName:FullName
 				else
 				{
-					try
-					{
-						Double.valueOf(line.split(":")[2]);
-					}
-					catch(Exception e)
+					if(!StringCastUtils.isDouble(line.split(":")[2]))
 					{
 						System.out.println("Error on line " + lineNum + " of Participants.txt. Expected a number after the second semicolon.");
 						return;
@@ -342,11 +349,8 @@ public class Main
 					
 					System.out.println();
 					System.out.println("Begin " + line.substring(2));
-					try
-					{
-						Integer.valueOf(line.substring(line.lastIndexOf(" ") + 1));
-					}
-					catch(Exception e)
+					
+					if(!StringCastUtils.isInteger(line.substring(line.lastIndexOf(" ") + 1)))
 					{
 						System.out.println("Error on line " + lineNum + " of Games.txt. Expected a number after the second semicolon.");
 						return;
