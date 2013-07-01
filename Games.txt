@@ -28,3 +28,16 @@ Cloud9:Vulcun
 CLG:TSM
 Coast:Velocity
 Curse:Dignitas
+//Week 3
+Dignitas:TSM
+Velocity:Curse
+CLG:Vulcun
+Cloud9:Coast
+Vulcun:Dignitas
+Cloud9:CLG
+Curse:TSM
+Coast:Velocity
+Vulcun:Cloud9
+Curse:Coast
+CLG:TSM
+Dignitas:Velocity

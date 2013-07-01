@@ -260,13 +260,19 @@ public class Main
 		try {
 			games = new BufferedReader(new FileReader("FutureGames.txt"));
 			String line;
+			int lineNum = 0;
 			while((line = games.readLine()) != null)
 			{
+				lineNum++;
 				//Lines starting with // are special directives and should be handled separately.
 				if(!line.startsWith("//"))
 				{
 					String blue = line.split(":")[0];
 					String red = line.split(":")[1];
+					if(Participants.get(blue) == null || Participants.get(red) == null)
+					{
+						System.out.println("Invalid team on line " + lineNum);
+					}
 					
 					//Chance that the "blue" side team will win (whichever is on the left).
 					double blueWinPerc = Math.pow(10, Participants.get(blue).getElo()/400)/(Math.pow(10, Participants.get(blue).getElo()/400) + Math.pow(10, Participants.get(red).getElo()/400));

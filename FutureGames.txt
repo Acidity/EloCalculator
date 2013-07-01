@@ -1,13 +1,9 @@
-//Week 3
-TSM:Dignitas
-Velocity:Curse
-CLG:Vulcun
-Coast:Cloud9
-Vulcun:Dignitas
-CLG:Cloud9
-Curse:TSM
-Coast:Velocity
-Vulcun:Cloud9
-Curse:Coast
-CLG:TSM
-Dignitas:Velocity
+//Week 4
+Curse:Vulcun
+Velocity:TSM
+Cloud9:Dignitas
+CLG:Coast
+Curse:Cloud9
+TSM:Coast
+Velocity:CLG
+Dignitas:Vulcun
