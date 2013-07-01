@@ -58,14 +58,14 @@ Settings.txt
 Settings.txt allows the end user to specify certain program-wide settings.
 The available settings are listed below:
 
-reddit:<true/false>
+reddit:true/false
 Determines whether or not the program should output it's data into a reddit-friendly table format.
 
-roundWinPercentages:<true/false>
+roundWinPercentages:true/false
 Determines whether or not the program should output the win percentages rounded to the nearest percentage point or not.
 
-useFullName:<true/false>
+useFullName:true/false
 Determines whether or not the program should use the full team names as specified in Participants.txt or not
 
-displayPerWinEloChanges:<true/false>
+displayPerWinEloChanges:true/false
 Determines whether or not the program should display the elo changes after every match for the participants involved.
