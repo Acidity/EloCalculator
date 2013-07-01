@@ -313,7 +313,7 @@ public class Main
 						System.out.println("Error on line " + lineNum + " of Participants.txt. Expected a number after the second semicolon.");
 						return;
 					}
-					Participants.put(line.split(":")[0], new Participant(line.split(":")[1],line.split(":")[0],Double.valueOf(line.split(":")[2])));
+					Participants.put(line.split(":")[0], new Participant(line.split(":")[1],line.split(":")[0],Double.valueOf(line.split(":")[2]),Double.valueOf(line.split(":")[3])));
 				}
 				lineNum++;
 			}
