@@ -52,14 +52,30 @@ public class Main
 	 * @param args Unused
 	 */
 	
-	final static String versionString = "0.0.5.023 7/1/2013";
+	final static String versionString = "0.0.5.026 7/1/2013";
 	
 	public static void main(String[] args)
 	{
 		System.out.println("EloCalculator Version " + versionString);
-		loadSettings();
-		loadParticipants();
-		loadGames();
+		
+		//if an error occurred in loadSettings, exit
+		if(!loadSettings())
+		{
+			return;
+		}
+		
+		//if an error occurred in loadParticipants, exit
+		if(!loadParticipants())
+		{
+			return;
+		}
+		
+		//if an error occurred in loadGames, exit
+		if(!loadGames())
+		{
+			return;
+		}
+		
 		endOfWeekEloRatings();
 		winProbabilities();
 	}
@@ -129,6 +145,7 @@ public class Main
 		Arrays.sort(eloArray,Collections.reverseOrder());
 		int ranking = 1;
 		
+		//Formatting for the 2 output modes
 		if(!reddit)
 		{
 			System.out.println("---------------------------------");
@@ -139,6 +156,7 @@ public class Main
 			System.out.println("|:---:|:-----:|:---------:|:-------------:|:-----:|:---------:|:-------------:|");
 		}
 		
+		//Loops thrugh every elo in the array
 		for(double elo : eloArray)
 		{
 			//handles the case where this particular elo is held by only 1 participant
@@ -148,6 +166,7 @@ public class Main
 				double lastWeeksElo = Participants.get(eloMap.get(elo)).getEloByWeek().get(Participants.get(eloMap.get(elo)).getEloByWeek().size()-1);
 				String teamName = eloMap.get(elo);
 				
+				//Changes output to the full name if that setting is enabled
 				if(useFullNames)
 				{
 					teamName = Participants.get(eloMap.get(elo)).getName();
@@ -178,7 +197,9 @@ public class Main
 					//General Console output
 					if(!reddit)
 					{
-						System.out.println("#" + ranking + " " + team + " | " + elo + " (" + (elo - lastWeeksElo) + ")" + " | " + (int)Participants.get(team).getWins() + "-" + (int)Participants.get(team).getLosses() + " | " + Math.round(elo) + " (" + (Math.round(elo) - Math.round(lastWeeksElo)) + ")");
+						System.out.println("#" + ranking + " " + team + " | " + elo + " (" + (elo - lastWeeksElo) + ")" + " | " 
+								+ (int)Participants.get(team).getWins() + "-" + (int)Participants.get(team).getLosses() + " | " + Math.round(elo) 
+								+ " (" + (Math.round(elo) - Math.round(lastWeeksElo)) + ")");
 					}
 					else //Output into a Reddit-friendly table
 					{
@@ -202,7 +223,8 @@ public class Main
 		System.out.println("ESTIMATED WIN PERCENTAGES");
 		BufferedReader games;
 		
-		try {
+		try 
+		{
 			games = new BufferedReader(new FileReader("FutureGames.txt"));
 			String line;
 			int lineNum = 0;
@@ -214,6 +236,7 @@ public class Main
 				{
 					String blue = line.split(":")[0];
 					String red = line.split(":")[1];
+					//Checks if the shorthand team names are valid
 					if(Participants.get(blue) == null || Participants.get(red) == null)
 					{
 						System.out.println("Invalid team on line " + lineNum);
@@ -224,6 +247,7 @@ public class Main
 					
 					//Chance that the "red" side team will win (whichever is on the left).
 					double redWinPerc = 1-blueWinPerc;
+					//TODO: Add non-reddit formatting
 					if(reddit)
 					{
 						//Changes the strings to be the full names for the teams
@@ -280,9 +304,10 @@ public class Main
 	
 	/**
 	 * Loads Participants.txt and adds all participants to the Participants HashMap
+	 * @return true if the method executed without error, false otherwise
 	 */
 	
-	public static void loadParticipants()
+	public static boolean loadParticipants()
 	{
 		BufferedReader participants;
 		
@@ -311,7 +336,7 @@ public class Main
 					if(!StringCastUtils.isDouble(line.split(":")[2]))
 					{
 						System.out.println("Error on line " + lineNum + " of Participants.txt. Expected a number after the second semicolon.");
-						return;
+						return false;
 					}
 					Participants.put(line.split(":")[0], new Participant(line.split(":")[1],line.split(":")[0],Double.valueOf(line.split(":")[2]),Double.valueOf(line.split(":")[3])));
 				}
@@ -322,13 +347,15 @@ public class Main
 		{
 			e.printStackTrace();
 		}
+		return true;
 	}
 	
 	/**
 	 * Loads Games.txt and calculates the participants Elos based on the results.
+	 * @return true if the method executed without error, false otherwise
 	 */
 	
-	public static void loadGames()
+	public static boolean loadGames()
 	{
 		BufferedReader games;
 		try {
@@ -347,11 +374,11 @@ public class Main
 					if(Participants.get(winner) == null || Participants.get(loser) == null)
 					{
 						System.out.println("Unable to find participant specified on line " + lineNum + " of 'Games.txt'. Stopping execution.");
-						return;
+						return false;
 					}
 					CalculateEloChange(Participants.get(winner),Participants.get(loser));
 				}
-				else
+				else if(line.startsWith("//Week")) //Handle lines that start with //Week
 				{
 					if(!line.equals("//Week 1"))
 					{
@@ -369,10 +396,24 @@ public class Main
 					if(!StringCastUtils.isInteger(line.substring(line.lastIndexOf(" ") + 1)))
 					{
 						System.out.println("Error on line " + lineNum + " of Games.txt. Expected a number after the second semicolon.");
-						return;
+						return false;
 					}
 					currentWeek = Integer.valueOf(line.substring(line.lastIndexOf(" ") + 1));
 					System.out.println();
+				}
+				else if(line.startsWith("//K-Change")) //Handle lines that start wtih //K-Change
+				{
+					if(Participants.get(line.split(":")[1]) == null)
+					{
+						System.out.println("Error on line " + lineNum + " of Games.txt. Expected a valid team shortHand name after the first semicolon.");
+						return false;
+					}
+					if(!StringCastUtils.isDouble(line.split(":")[2]))
+					{
+						System.out.println("Error on line " + lineNum + " of Games.txt. Expected a valid double after the second semicolon.");
+						return false;
+					}
+					Participants.get(line.split(":")[1]).setK(Double.valueOf(line.split(":")[2]));
 				}
 				
 			}
@@ -381,13 +422,15 @@ public class Main
 		{
 			e.printStackTrace();
 		}
+		return true;
 	}
 	
 	/**
 	 * Loads Settings.txt
+	 * @return true if the method executed without error, false otherwise
 	 */
 	
-	public static void loadSettings()
+	public static boolean loadSettings()
 	{
 		BufferedReader settings;
 		try 
@@ -404,6 +447,7 @@ public class Main
 					if(!StringCastUtils.isBoolean(line.split(":")[1]))
 					{
 						System.out.println("Expected a boolean after the semicolon on line " + lineNum + " of Settings.txt.");
+						return false;
 					}
 					reddit = Boolean.valueOf(line.split(":")[1]);
 				}
@@ -413,6 +457,7 @@ public class Main
 					if(!StringCastUtils.isBoolean(line.split(":")[1]))
 					{
 						System.out.println("Expected a boolean after the semicolon on line " + lineNum + " of Settings.txt.");
+						return false;
 					}
 					roundWinPercs = Boolean.valueOf(line.split(":")[1]);
 				}
@@ -422,6 +467,7 @@ public class Main
 					if(!StringCastUtils.isBoolean(line.split(":")[1]))
 					{
 						System.out.println("Expected a boolean after the semicolon on line " + lineNum + " of Settings.txt.");
+						return false;
 					}
 					useFullNames = Boolean.valueOf(line.split(":")[1]);
 				}
@@ -431,6 +477,7 @@ public class Main
 					if(!StringCastUtils.isBoolean(line.split(":")[1]))
 					{
 						System.out.println("Expected a boolean after the semicolon on line " + lineNum + " of Settings.txt.");
+						return false;
 					}
 					perWinElo = Boolean.valueOf(line.split(":")[1]);
 				}
@@ -440,5 +487,6 @@ public class Main
 		{
 			e.printStackTrace();
 		}
+		return true;
 	}
 }
