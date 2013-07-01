@@ -4,6 +4,7 @@
 package com.TylerOMeara.EloCalculator;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
@@ -47,10 +48,12 @@ public class Main
 	 * @param args Unused
 	 */
 	
-	final static String versionString = "0.0.5.016 7/1/2013";
+	final static String versionString = "0.0.5.017 7/1/2013";
 	
 	public static void main(String[] args)
 	{
+		System.out.println("EloCalculator Version " + versionString);
+		loadSettings();
 		loadParticipants();
 		loadGames();
 		endOfWeekEloRatings();
@@ -355,6 +358,52 @@ public class Main
 			}
 		}
 		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static void loadSettings()
+	{
+		BufferedReader settings;
+		try 
+		{
+			settings = new BufferedReader(new FileReader("Settings.txt"));
+			String line;
+			int lineNum = 0;
+			//Loops until the end of the file is reached
+			while((line = settings.readLine()) != null)
+			{
+				lineNum++;
+				if(line.startsWith("reddit:"))
+				{
+					if(!StringCastUtils.isBoolean(line.split(":")[1]))
+					{
+						System.out.println("Expected a boolean after the semicolon on line " + lineNum + " of Settings.txt.");
+					}
+					reddit = Boolean.valueOf(line.split(":")[1]);
+				}
+				
+				if(line.startsWith("roundWinPercentages:"))
+				{
+					if(!StringCastUtils.isBoolean(line.split(":")[1]))
+					{
+						System.out.println("Expected a boolean after the semicolon on line " + lineNum + " of Settings.txt.");
+					}
+					roundWinPercs = Boolean.valueOf(line.split(":")[1]);
+				}
+				
+				if(line.startsWith("useFullName:"))
+				{
+					if(!StringCastUtils.isBoolean(line.split(":")[1]))
+					{
+						System.out.println("Expected a boolean after the semicolon on line " + lineNum + " of Settings.txt.");
+					}
+					useFullNames = Boolean.valueOf(line.split(":")[1]);
+				}
+			}
+		}
+		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
