@@ -67,7 +67,15 @@ public class Main
 				//ShortHandName:FullName
 				else
 				{
-					//TODO:Handle exceptions
+					try
+					{
+						Double.valueOf(line.split(":")[2]);
+					}
+					catch(Exception e)
+					{
+						System.out.println("Error on line " + lineNum + " of Participants.txt. Expected a number after the second semicolon.");
+						return;
+					}
 					Participants.put(line.split(":")[0], new Participant(line.split(":")[1],line.split(":")[0],Double.valueOf(line.split(":")[2])));
 				}
 				lineNum++;
@@ -113,7 +121,15 @@ public class Main
 					
 					System.out.println();
 					System.out.println("Begin " + line.substring(2));
-					//TODO: Handle exceptions.
+					try
+					{
+						Integer.valueOf(line.substring(line.lastIndexOf(" ") + 1));
+					}
+					catch(Exception e)
+					{
+						System.out.println("Error on line " + lineNum + " of Games.txt. Expected a number after the second semicolon.");
+						return;
+					}
 					currentWeek = Integer.valueOf(line.substring(line.lastIndexOf(" ") + 1));
 					System.out.println();
 				}
