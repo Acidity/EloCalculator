@@ -56,10 +56,11 @@ public class Participant
 		this.k = k;
 	}
 	
-	public Participant(String Name, String ShortName)
+	public Participant(String Name, String ShortName, double K)
 	{
 		name = Name;
 		shortName = ShortName;
+		k = K;
 		eloByGame.add(elo);
 	}
 	public String getShortName() {

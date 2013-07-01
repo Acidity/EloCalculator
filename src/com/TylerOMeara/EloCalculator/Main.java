@@ -67,7 +67,8 @@ public class Main
 				//ShortHandName:FullName
 				else
 				{
-					Participants.put(line.split(":")[0], new Participant(line.split(":")[1],line.split(":")[0]));
+					//TODO:Handle exceptions
+					Participants.put(line.split(":")[0], new Participant(line.split(":")[1],line.split(":")[0],Double.valueOf(line.split(":")[2])));
 				}
 				lineNum++;
 			}

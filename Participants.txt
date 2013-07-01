@@ -1,9 +1,9 @@
 8
-Vulcun:Vulcun TechBargains
-Cloud9:Cloud 9 HyperX
-Velocity:Velocity Esports
-Coast:Team Coast
-Curse:Team Curse
-CLG:Counter Logic Gaming
-Dignitas:Team Dignitas
-TSM:Team Solo Mid Snapdragon
+Vulcun:Vulcun TechBargains:36
+Cloud9:Cloud 9 HyperX:36
+Velocity:Velocity Esports:36
+Coast:Team Coast:36
+Curse:Team Curse:36
+CLG:Counter Logic Gaming:36
+Dignitas:Team Dignitas:36
+TSM:Team Solo Mid Snapdragon:36
