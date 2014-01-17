@@ -245,7 +245,7 @@ public class Main
 					//Chance that the "blue" side team will win (whichever is on the left).
 					double blueWinPerc = Math.pow(10, Participants.get(blue).getElo()/400)/(Math.pow(10, Participants.get(blue).getElo()/400) + Math.pow(10, Participants.get(red).getElo()/400));
 					
-					//Chance that the "red" side team will win (whichever is on the left).
+					//Chance that the "red" side team will win (whichever is on the right).
 					double redWinPerc = 1-blueWinPerc;
 					//TODO: Add non-reddit formatting
 					if(reddit)
